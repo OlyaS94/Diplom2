@@ -1,12 +1,24 @@
 import bs4
 import requests
-from vkinder_b import user_info, output_search_result,add_favorite,ban_list,clear_database
+from vkinder_b import user_info, output_search_result, add_favorite, ban_list, clear_database
 from bot import *
 from words import start_word, stop_word
 
-candidate_values = {'sex': 0,'age_from': 0,'age_to': 0,'city': 0,'status': 0}
+candidate_values = {
+  'sex': 0,
+  'age_from': 0,
+  'age_to': 0,
+  'city': 0,
+  'status': 0
+  }
 
-candidate = {'sex': '','age_from': 0,'age_to': 0,'city': '','status': ''}
+candidate = {
+  'sex': '',
+  'age_from': 0,
+  'age_to': 0,
+  'city': '',
+  'status': ''
+  }
 
 params = {
   'start_dialog': False,
@@ -46,7 +58,7 @@ class VkBot:
         if i == "<":
           not_skip = False
         else:
-          result += i
+            result += i
       else:
         if i == ">":
           not_skip = True
@@ -93,7 +105,6 @@ class VkBot:
         params['input_status'] = True
         params['input_age'] = False
         return f'Введите семейное положение.\n{Search.status()}'
-
       else:
         return 'Ошибка'
 
@@ -114,10 +125,10 @@ class VkBot:
         candidate['city'] = message
         params['ready'] = True
         params['input_city'] = False
-        return f'Данные:\n{candidate["sex"]} от {candidate["age_from"]} до {candidate["age_to"]} ' \
-        f'{candidate["status"]}\nИз города {candidate["city"].capitalize()}' \
-        f'\nДля запуска поиска введите "старт"\nДля отмены введите "стоп"\n' \
-        f'Для изменения параметров введите "сброс"\n\nДождитесь окончания проверки'
+        return f'Данные:\n{candidate["sex"]}от {candidate["age_from"]} до {candidate["age_to"]} '\
+               f'{candidate["status"]}\nИз города {candidate["city"].capitalize()}'\
+               f'\nДля запуска поиска введите "старт"\nДля отмены введите "стоп"\n'\
+               f'Для изменения параметров введите "сброс"\n\nДождитесь окончания проверки'
       else:
         return city_title
 
@@ -139,16 +150,18 @@ class VkBot:
       return 'Повторите ввод:\nВыберите пол (М / Ж):'
 
     elif params['search_completed'] and message.isdigit():
-      if int(message) > params['limit']:
+      if int(message) > 0:
         message = params['limit']
         response = output_search_result(int(message))
         output_info.append(response)
         clear_database()
         params['output'] = True
         params['count'] = int(message)
-        return f'Будет показано {message} варианта(ов)\nПросмотрите фото по ссылкам, затем введите "+" или "-"\n' \
-        f'+  добавить в избранное\n- добавить в черный список\n\nДля запуска нажмите "+"'
-
+        return f'Будет показано {message} варианта(ов)\nПросмотрите фото по ссылкам, затем введите "+" или "-"\n'\
+               f'+  добавить в избранное\n- добавить в черный список\n\nДля запуска нажмите "+"'
+      else:
+        return 'Ошибка'
+      
     elif params['output'] and message == '+' and params['count'] != 0:
       params['count'] -= 1
       params['iter'] += 1
